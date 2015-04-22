@@ -1,0 +1,155 @@
+[
+  {
+    "children": [
+      {
+        "children": [
+          {
+            "children": false,
+            "parent": "Work data",
+            "size": 8554649,
+            "name": "workdata0"
+          },
+          {
+            "children": false,
+            "parent": "Work data",
+            "size": 16382731,
+            "name": "workdata1"
+          },
+          {
+            "children": false,
+            "parent": "Work data",
+            "size": 19177027,
+            "name": "workdata2"
+          },
+          {
+            "children": false,
+            "parent": "Work data",
+            "size": 16317349,
+            "name": "workdata3"
+          },
+          {
+            "children": false,
+            "parent": "Work data",
+            "size": 9529919,
+            "name": "workdata4"
+          },
+          {
+            "children": false,
+            "parent": "Work data",
+            "size": 9125822,
+            "name": "workdata5"
+          },
+          {
+            "children": false,
+            "parent": "Work data",
+            "size": 2530901,
+            "name": "workdata6"
+          },
+          {
+            "children": false,
+            "parent": "Work data",
+            "size": 18357591,
+            "name": "workdata7"
+          },
+          {
+            "children": false,
+            "parent": "Work data",
+            "size": 6140898,
+            "name": "workdata8"
+          },
+          {
+            "children": false,
+            "parent": "Work data",
+            "size": 4817849,
+            "name": "workdata9"
+          },
+          {
+            "children": false,
+            "parent": "Work data",
+            "size": 18215447,
+            "name": "workdata10"
+          },
+          {
+            "children": false,
+            "parent": "Work data",
+            "size": 5171728,
+            "name": "workdata11"
+          }
+        ],
+        "parent": "All data",
+        "size": "134321911",
+        "name": "Work data"
+      },
+      {
+        "children": [
+          {
+            "children": false,
+            "parent": "Personal data",
+            "size": 4178136,
+            "name": "personaldata10"
+          },
+          {
+            "children": false,
+            "parent": "Personal data",
+            "size": 4363113,
+            "name": "personaldata11"
+          },
+          {
+            "children": false,
+            "parent": "Personal data",
+            "size": 1598072,
+            "name": "personaldata12"
+          },
+          {
+            "children": false,
+            "parent": "Personal data",
+            "size": 15974298,
+            "name": "personaldata13"
+          },
+          {
+            "children": false,
+            "parent": "Personal data",
+            "size": 20404470,
+            "name": "personaldata14"
+          },
+          {
+            "children": false,
+            "parent": "Personal data",
+            "size": 15920887,
+            "name": "personaldata15"
+          },
+          {
+            "children": false,
+            "parent": "Personal data",
+            "size": 3091831,
+            "name": "personaldata16"
+          },
+          {
+            "children": false,
+            "parent": "Personal data",
+            "size": 12677888,
+            "name": "personaldata17"
+          },
+          {
+            "children": false,
+            "parent": "Personal data",
+            "size": 8952946,
+            "name": "personaldata18"
+          },
+          {
+            "children": false,
+            "parent": "Personal data",
+            "size": 3762601,
+            "name": "personaldata19"
+          }
+        ],
+        "parent": "All data",
+        "size": "90924242",
+        "name": "Personal data"
+      }
+    ],
+    "parent": false,
+    "size": "225246153",
+    "name": "All data"
+  }
+]
