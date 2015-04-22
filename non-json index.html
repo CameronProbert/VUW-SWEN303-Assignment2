@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en" style="background-color: darkgrey">
+    <head>
+        <title>Disk Structure</title>
+        <meta charset="utf-8"/>
+        <script src="http://d3js.org/d3.v3.min.js"></script>
+        <style>
+            h1 {
+                text-align: center;
+                font-size: 50px;
+            }
+
+            input.centred {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            div.centred {
+                position:absolute ;
+                left:50% ;
+                margin-left: -380px;
+                top:40% ;
+                margin-top: 190px;
+            }
+
+            svg.centred {
+                position:absolute ;
+                left:50% ;
+                margin-left: -320px;
+                top:40% ;
+                margin-top: -180px;
+            }
+        </style>
+        <!--
+
+                width: 640px;
+                display: block;
+                margin: auto auto;
+                margin-left: auto;
+                margin-right: auto;-->
+    </head>
+    <body>
+
+        <!-- Javascript -->
+        <script>
+            "use strict";
+
+            var width = 640;
+            var height = 360;
+
+            var scaleWidth = d3.scale.linear()
+                    .domain([0, 1])
+                    .rangeRound([0, width]);
+
+            var scaleHeight = d3.scale.linear()
+                    .domain([0, 1])
+                    .rangeRound([0, height]);
+
+            // Start of data population ---------------------------
+
+            // Creates the root data directory
+            var allData = [];
+            allData.name = "All Media Data";
+            allData.type = true;
+            allData.hasParent = false;
+            allData.size = 0;
+
+            // Creates the work and non-work subdirectories and adds them to the root directory
+            var classWork = [];
+            classWork.name = "Work Related Data";
+            classWork.type = true;
+            classWork.hasParent = true;
+            classWork.parent = allData;
+            classWork.size = 0;
+
+            var classPlay = [];
+            classPlay.name = "Non-Work Related Data";
+            classPlay.type = true;
+            classPlay.hasParent = true;
+            classPlay.parent = allData;
+            classPlay.size = 0;
+
+            allData.push(classWork);
+            allData.push(classPlay);
+
+            // Creates and adds all the work arrays to the work directory
+            var videoWork = [];
+            videoWork.name = "Video Data";
+            videoWork.type = true;
+            videoWork.hasParent = true;
+            videoWork.parent = classWork;
+            videoWork.size = 0;
+
+            var picWork = [];
+            picWork.name = "Picture Data";
+            picWork.type = true;
+            picWork.hasParent = true;
+            picWork.parent = classWork;
+            picWork.size = 0;
+
+            var docWork = [];
+            docWork.name = "Document Data";
+            docWork.type = true;
+            docWork.hasParent = true;
+            docWork.parent = classWork;
+            docWork.size = 0;
+
+            classWork.push(videoWork);
+            classWork.push(picWork);
+            classWork.push(docWork);
+
+            // Creates and adds all the non-work ('play') arrays to the non-work directory
+            var videoPlay = [];
+            videoPlay.name = "Video Data";
+            videoPlay.type = true;
+            videoPlay.hasParent = true;
+            videoPlay.parent = classPlay;
+            videoPlay.size = 0;
+
+            var picPlay = [];
+            picPlay.name = "Picture Data";
+            picPlay.type = true;
+            picPlay.hasParent = true;
+            picPlay.parent = classPlay;
+            picPlay.size = 0;
+
+            var docPlay = [];
+            docPlay.name = "Document Data";
+            docPlay.type = true;
+            docPlay.hasParent = true;
+            docPlay.parent = classPlay;
+            docPlay.size = 0;
+
+            classPlay.push(videoPlay);
+            classPlay.push(picPlay);
+            classPlay.push(docPlay);
+
+
+            var numItems = 100;
+
+            // Size of media in bytes
+            var minVideoSize = 10 * 1024;
+            var maxVideoSize = 200 * 1024 * 1024;
+            var minPictureSize = 10 * 1024;
+            var maxPictureSize = 20 * 1024 * 1024;
+            var minDocSize = 10 * 1024;
+            var maxDocSize = 10 * 1024 * 1024;
+
+            // Create scales
+            var videoScale = d3.scale.linear()
+                    .domain([0, 1])
+                    .rangeRound([minVideoSize, maxVideoSize]);
+            var picScale = d3.scale.linear()
+                    .domain([0, 1])
+                    .rangeRound([minPictureSize, maxPictureSize]);
+            var docScale = d3.scale.linear()
+                    .domain([0, 1])
+                    .rangeRound([minDocSize, maxDocSize]);
+
+            // Populate each array by obtaining a random number which signifies which 'directory' the file is stored in.
+            // It then obtains a random size for that object.
+            for (var i = 0; i < numItems; i++) {
+                var categoryNum = Math.random() * 6;
+                var itemName = "";
+                var itemSize = -1;
+
+                var item = new Object(),
+                        parent = "",
+                        hasParent = true,
+                        type = false,
+                        name = "",
+                        size = -1;
+                if (categoryNum < 1) {
+                    itemName = "videoW" + i;
+                    itemSize = videoScale(Math.random());
+                    item.name = itemName;
+                    item.size = itemSize;
+                    item.parent = videoWork;
+                    videoWork.size += item.size;
+                    classWork.size += item.size;
+                    videoWork.push(item);
+                }
+                else if (categoryNum < 2) {
+                    itemName = "picW" + i;
+                    itemSize = picScale(Math.random());
+                    item.name = itemName;
+                    item.size = itemSize;
+                    item.parent = picWork;
+                    picWork.size += item.size;
+                    classWork.size += item.size;
+                    picWork.push(item);
+                }
+                else if (categoryNum < 3) {
+                    itemName = "docW" + i;
+                    itemSize = docScale(Math.random());
+                    item.name = itemName;
+                    item.size = itemSize;
+                    item.parent = docWork;
+                    docWork.size += item.size;
+                    classWork.size += item.size;
+                    docWork.push(item);
+                }
+                else if (categoryNum < 4) {
+                    itemName = "videoP" + i;
+                    itemSize = videoScale(Math.random());
+                    item.name = itemName;
+                    item.size = itemSize;
+                    item.parent = videoPlay;
+                    videoPlay.size += item.size;
+                    classPlay.size += item.size;
+                    videoPlay.push(item);
+                }
+                else if (categoryNum < 5) {
+                    itemName = "picP" + i;
+                    itemSize = videoScale(Math.random());
+                    item.name = itemName;
+                    item.size = itemSize;
+                    item.parent = picPlay;
+                    picPlay.size += item.size;
+                    classPlay.size += item.size;
+                    picPlay.push(item);
+                }
+                else {
+                    itemName = "docP" + i;
+                    itemSize = docScale(Math.random());
+                    item.name = itemName;
+                    item.size = itemSize;
+                    item.parent = docPlay;
+                    docPlay.size += item.size;
+                    classPlay.size += item.size;
+                    docPlay.push(item);
+                }
+                allData.size += item.size;
+            }
+            // End of data population -----------------------------
+
+            // Create the svg
+            var svg = d3.select("body")
+                    .append("svg")
+                    .attr("width", width)
+                    .attr("height", height)
+                    .attr("class", "centred");
+
+            var directoryStack = [allData];
+            var selectedData = allData;
+            var highlightedIndex = 0;
+            redraw();
+
+            // Changes the highlighted arc
+            function changeArc(clockwise) {
+                if (clockwise) {
+                    highlightedIndex = highlightedIndex + 1;
+                    if (highlightedIndex === selectedData.length) {
+                        highlightedIndex = 0;
+                    }
+                } else {
+                    highlightedIndex = highlightedIndex - 1;
+                    if (highlightedIndex === -1) {
+                        highlightedIndex = selectedData.length - 1;
+                    }
+                }
+                redraw();
+            }
+
+            // Deletes the selected arc
+            function deleteSegment() {
+                // If there is something to delete and it is a leaf node or there is nothing inside the directory
+                if (selectedData.length > 0 && (!(selectedData[highlightedIndex].type) || selectedData[highlightedIndex].length === 0)) {
+                    for (var i = 0; i < directoryStack.length; i++) {
+                        directoryStack[i].size -= selectedData[highlightedIndex].size;
+                    }
+                    selectedData.splice(highlightedIndex, 1);
+                    highlightedIndex--;
+                    if (highlightedIndex < 0) {
+                        highlightedIndex = 0;
+                    }
+                }
+                redraw();
+            }
+
+            // Moves into the highlighted arc
+            function selectSegment() {
+                if (selectedData[highlightedIndex].type) {
+                    selectedData = selectedData[highlightedIndex];
+                    highlightedIndex = 0;
+                    directoryStack.push(selectedData);
+                    redraw();
+                }
+            }
+
+            // Goes back to the previous arc
+            function backSegment() {
+                if (selectedData.hasParent) {
+                    selectedData = selectedData.parent;
+                    highlightedIndex = 0;
+                    directoryStack.pop();
+                    redraw();
+                }
+            }
+
+            // Redraws the svg
+            function redraw() {
+
+                var angleStart = 0;
+                var innerRadius = 40;
+                var outerRadius = 140;
+                var selectedPadding = 2;
+
+                var dataMax = d3.max(selectedData, function (d) {
+                    return d.size;
+                });
+                var dataMin = d3.min(selectedData, function (d) {
+                    return d.size;
+                });
+
+                var radScale = d3.scale.linear()
+                        .domain([0, 1])
+                        .range([0, 2 * Math.PI]);
+
+                // Remove all the previous elements from the svg
+                d3.selectAll("svg > *")
+                        .remove();
+
+                svg.append("rect")
+                        .attr("width",width)
+                        .attr("height",height)
+                        .attr("style","fill:rgb(255,255,255)");//stroke-width:3;stroke:rgb(0,0,0)");
+
+                svg.append("text")
+                        .text("File Structure")
+                        .attr("x", width / 2)
+                        .attr("y", 40)
+                        .attr("text-anchor", "middle")
+                        .attr("font-size", "40");
+
+                // If there is data to draw
+                if (selectedData.length > 0) {
+
+                    // Draw each of the arcs
+                    for (var i = 0; i < selectedData.length; i++) {
+
+                        var angleProportion = selectedData[i].size / selectedData.size;
+
+                        // Create the arc
+                        // Base arc code from: http://stackoverflow.com/questions/12717652/making-an-arc-in-d3-js
+                        // Username: Bill (edited by Eric S. Bullington)
+                        var arc = d3.svg.arc()
+                                .startAngle(radScale(angleStart)) //converting from degs to radians
+                                .endAngle(radScale(angleStart + angleProportion - 0.003)); //just radians
+
+                        angleStart += angleProportion;
+
+                        // Set the colour for the arc
+                        var colour;
+                        var redScale = d3.scale.linear()
+                                .domain([dataMin, dataMax])
+                                .rangeRound([124, 24]);
+                        var greenScale = d3.scale.linear()
+                                .domain([dataMin, dataMax])
+                                .rangeRound([109, 22]);
+                        var blueScale = d3.scale.linear()
+                                .domain([dataMin, dataMax])
+                                .rangeRound([132, 25]);
+
+                        if (i === highlightedIndex) {
+                            colour = "rgb(90,24,127)";
+                            arc.innerRadius(innerRadius - selectedPadding / 2)
+                                    .outerRadius(outerRadius + selectedPadding);
+                        } else {
+                            colour = "rgb(" + redScale(selectedData[i].size) + "," + greenScale(selectedData[i].size) + "," + blueScale(selectedData[i].size) + ")";
+                            arc.innerRadius(innerRadius)
+                                    .outerRadius(outerRadius);
+                        }
+
+                        //Draw the arc
+                        svg.append("path")
+                                .attr("d", arc)
+                                .attr("fill", colour)
+                                .attr("transform", "translate(" + width/4 + ", " + ((height-35)/2+35) + ")");
+                    }
+
+                    // Print out the text to the right of the data wheel
+                    svg.append("text")
+                            .text(function () {
+                                var text = directoryStack[0].name;
+                                for (var i = 1; i < directoryStack.length; i++) {
+                                    text += "/" + directoryStack[i].name;
+                                }
+                                return text;
+                            })
+                            .attr("x", width/2)
+                            .attr("y", height/2-50)
+                            .attr("font-size", "20");
+
+                    svg.append("text")
+                            .text("Browsing: " + selectedData.name)
+                            .attr("x", width/2)
+                            .attr("y", height/2-20)
+                            .attr("font-size", "20");
+
+                    svg.append("text")
+                            .text("Total size: " + numberWithCommas(selectedData.size) + " bytes")
+                            .attr("x", width/2)
+                            .attr("y", height/2)
+                            .attr("font-size", "20");
+
+                    svg.append("text")
+                            .text("Selected: " + selectedData[highlightedIndex].name)
+                            .attr("x", width/2)
+                            .attr("y", height/2+30)
+                            .attr("font-size", "20");
+
+                    svg.append("text")
+                            .text("Size: " + numberWithCommas(selectedData[highlightedIndex].size) + " bytes")
+                            .attr("x", width/2)
+                            .attr("y", height/2+50)
+                            .attr("font-size", "20");
+                }
+                // If there is no data to draw
+                else {
+                    svg.append("text")
+                            .text("There is no data stored on this disk")
+                            .attr("x", width/2)
+                            .attr("y", 100)
+                            .attr("text-anchor", "middle");
+                }
+            }
+
+            // Method from: http://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
+            // User name: Elias Zamaria
+            function numberWithCommas(x) {
+                return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            }
+
+        </script>
+
+        <div class="centred" id="buttons">
+            <!-- Buttons -->
+            <input id="button1" type="button" value="Swipe Back (Navigate)" onclick="changeArc(false);"/>
+            <input id="button2" type="button" value="Swipe Forwards (Navigate)" onclick="changeArc(true);"/>
+            <input id="button3" type="button" value="Swipe Down (Back)" onclick="backSegment();"/>
+            <input id="button4" type="button" value="Tap (Select)" onclick="selectSegment();"/>
+            <input id="button5" type="button" value="Double Tap (Delete)" onclick="deleteSegment();"/>
+        </div>
+    </body>
+</html>
