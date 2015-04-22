@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html style="background-color: cornsilk">
+<html lang="en" style="background-color: darkgrey">
     <head>
         <title>Disk Structure</title>
-        <meta charset ="utf-8"/>
+        <meta charset="utf-8"/>
         <script src="http://d3js.org/d3.v3.min.js"></script>
         <style>
             h1 {
@@ -17,36 +17,45 @@
             }
 
             div.centred {
-                width: 30%;
-                display: block;
-                margin-left: auto;
-                margin-right: auto;
+                position:absolute ;
+                left:50% ;
+                margin-left: -380px;
+                top:40% ;
+                margin-top: 190px;
             }
 
             svg.centred {
-                width: 1300px;
-                display: block;
-                margin-left: auto;
-                margin-right: auto;
+                position:absolute ;
+                left:50% ;
+                margin-left: -320px;
+                top:40% ;
+                margin-top: -180px;
             }
         </style>
-    </head>
-    <body >
-        <!-- Heading -->
-        <h1>File Structure</h1>
+        <!--
 
-        <div class="centred" id="buttons">
-            <!-- Buttons -->
-            <input id="button1" type="button" value="Swipe Back (Navigate)" onclick="changeArc(false);"/>
-            <input id="button2" type="button" value="Swipe Forwards (Navigate)" onclick="changeArc(true);"/>
-            <input id="button3" type="button" value="Swipe Down (Back)" onclick="backSegment();"/>
-            <input id="button4" type="button" value="Tap (Select)" onclick="selectSegment();"/>
-            <input id="button5" type="button" value="Double Tap (Delete)" onclick="deleteSegment();"/>
-        </div>
+                width: 640px;
+                display: block;
+                margin: auto auto;
+                margin-left: auto;
+                margin-right: auto;-->
+    </head>
+    <body>
 
         <!-- Javascript -->
         <script>
             "use strict";
+
+            var width = 640;
+            var height = 360;
+
+            var scaleWidth = d3.scale.linear()
+                    .domain([0, 1])
+                    .rangeRound([0, width]);
+
+            var scaleHeight = d3.scale.linear()
+                    .domain([0, 1])
+                    .rangeRound([0, height]);
 
             // Start of data population ---------------------------
 
@@ -229,8 +238,9 @@
             // Create the svg
             var svg = d3.select("body")
                     .append("svg")
-                    .attr("width", 1300)
-                    .attr("height", 400);
+                    .attr("width", width)
+                    .attr("height", height)
+                    .attr("class", "centred");
 
             var directoryStack = [allData];
             var selectedData = allData;
@@ -312,6 +322,18 @@
                 d3.selectAll("svg > *")
                         .remove();
 
+                svg.append("rect")
+                        .attr("width",width)
+                        .attr("height",height)
+                        .attr("style","fill:rgb(255,255,255)");//stroke-width:3;stroke:rgb(0,0,0)");
+
+                svg.append("text")
+                        .text("File Structure")
+                        .attr("x", width / 2)
+                        .attr("y", 40)
+                        .attr("text-anchor", "middle")
+                        .attr("font-size", "40");
+
                 // If there is data to draw
                 if (selectedData.length > 0) {
 
@@ -319,7 +341,10 @@
                     for (var i = 0; i < selectedData.length; i++) {
 
                         var angleProportion = selectedData[i].size / selectedData.size;
+
                         // Create the arc
+                        // Base arc code from: http://stackoverflow.com/questions/12717652/making-an-arc-in-d3-js
+                        // Username: Bill (edited by Eric S. Bullington)
                         var arc = d3.svg.arc()
                                 .startAngle(radScale(angleStart)) //converting from degs to radians
                                 .endAngle(radScale(angleStart + angleProportion - 0.003)); //just radians
@@ -352,7 +377,7 @@
                         svg.append("path")
                                 .attr("d", arc)
                                 .attr("fill", colour)
-                                .attr("transform", "translate(600, " + (outerRadius + selectedPadding + 10) + ")");
+                                .attr("transform", "translate(" + width/4 + ", " + ((height-35)/2+35) + ")");
                     }
 
                     // Print out the text to the right of the data wheel
@@ -364,35 +389,41 @@
                                 }
                                 return text;
                             })
-                            .attr("x", 750)
-                            .attr("y", 100);
+                            .attr("x", width/2)
+                            .attr("y", height/2-50)
+                            .attr("font-size", "20");
 
                     svg.append("text")
                             .text("Browsing: " + selectedData.name)
-                            .attr("x", 750)
-                            .attr("y", 130);
+                            .attr("x", width/2)
+                            .attr("y", height/2-20)
+                            .attr("font-size", "20");
 
                     svg.append("text")
                             .text("Total size: " + numberWithCommas(selectedData.size) + " bytes")
-                            .attr("x", 750)
-                            .attr("y", 150);
+                            .attr("x", width/2)
+                            .attr("y", height/2)
+                            .attr("font-size", "20");
 
                     svg.append("text")
                             .text("Selected: " + selectedData[highlightedIndex].name)
-                            .attr("x", 750)
-                            .attr("y", 180);
+                            .attr("x", width/2)
+                            .attr("y", height/2+30)
+                            .attr("font-size", "20");
 
                     svg.append("text")
                             .text("Size: " + numberWithCommas(selectedData[highlightedIndex].size) + " bytes")
-                            .attr("x", 750)
-                            .attr("y", 200);
+                            .attr("x", width/2)
+                            .attr("y", height/2+50)
+                            .attr("font-size", "20");
                 }
                 // If there is no data to draw
                 else {
                     svg.append("text")
                             .text("There is no data stored on this disk")
-                            .attr("x", 550)
-                            .attr("y", 100);
+                            .attr("x", width/2)
+                            .attr("y", 100)
+                            .attr("text-anchor", "middle");
                 }
             }
 
@@ -403,5 +434,14 @@
             }
 
         </script>
+
+        <div class="centred" id="buttons">
+            <!-- Buttons -->
+            <input id="button1" type="button" value="Swipe Back (Navigate)" onclick="changeArc(false);"/>
+            <input id="button2" type="button" value="Swipe Forwards (Navigate)" onclick="changeArc(true);"/>
+            <input id="button3" type="button" value="Swipe Down (Back)" onclick="backSegment();"/>
+            <input id="button4" type="button" value="Tap (Select)" onclick="selectSegment();"/>
+            <input id="button5" type="button" value="Double Tap (Delete)" onclick="deleteSegment();"/>
+        </div>
     </body>
 </html>
