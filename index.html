@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html style="background-color: mintcream;">
+<html style="background-color: cornsilk">
     <head>
         <title>Disk Structure</title>
-        <meta charset="utf-8">
+        <meta charset ="utf-8"/>
         <script src="http://d3js.org/d3.v3.min.js"></script>
         <style>
             h1 {
@@ -31,7 +31,7 @@
             }
         </style>
     </head>
-    <body>
+    <body >
         <!-- Heading -->
         <h1>File Structure</h1>
 
@@ -133,10 +133,10 @@
             // Size of media in bytes
             var minVideoSize = 10 * 1024;
             var maxVideoSize = 200 * 1024 * 1024;
-            var minPictureSize = 1 * 1024;
-            var maxPictureSize = 2 * 1024 * 1024;
-            var minDocSize = 1 * 1024;
-            var maxDocSize = 1 * 1024 * 1024;
+            var minPictureSize = 10 * 1024;
+            var maxPictureSize = 20 * 1024 * 1024;
+            var minDocSize = 10 * 1024;
+            var maxDocSize = 10 * 1024 * 1024;
 
             // Create scales
             var videoScale = d3.scale.linear()
@@ -230,7 +230,7 @@
             var svg = d3.select("body")
                     .append("svg")
                     .attr("width", 1300)
-                    .attr("height", 300);
+                    .attr("height", 400);
 
             var directoryStack = [allData];
             var selectedData = allData;
@@ -281,8 +281,6 @@
 
             // Goes back to the previous arc
             function backSegment() {
-                console.log(selectedData.name);
-                console.log(selectedData.hasParent);
                 if (selectedData.hasParent) {
                     selectedData = selectedData.parent;
                     highlightedIndex = 0;
@@ -293,39 +291,68 @@
 
             // Redraws the svg
             function redraw() {
-                var degToRad = Math.PI / 180;
-                var numSegments = selectedData.length;
-                var segmentAngle = 360 / numSegments;
+
+                var angleStart = 0;
+                var innerRadius = 40;
+                var outerRadius = 140;
+                var selectedPadding = 2;
+
+                var dataMax = d3.max(selectedData, function (d) {
+                    return d.size;
+                });
+                var dataMin = d3.min(selectedData, function (d) {
+                    return d.size;
+                });
+
+                var radScale = d3.scale.linear()
+                        .domain([0, 1])
+                        .range([0, 2 * Math.PI]);
 
                 // Remove all the previous elements from the svg
                 d3.selectAll("svg > *")
                         .remove();
 
-                if (numSegments > 0) {
+                // If there is data to draw
+                if (selectedData.length > 0) {
 
                     // Draw each of the arcs
-                    for (var i = 0; i < numSegments; i++) {
+                    for (var i = 0; i < selectedData.length; i++) {
 
+                        var angleProportion = selectedData[i].size / selectedData.size;
                         // Create the arc
                         var arc = d3.svg.arc()
-                                .innerRadius(40)
-                                .outerRadius(140)
-                                .startAngle(i * segmentAngle * degToRad) //converting from degs to radians
-                                .endAngle(((i + 1) * segmentAngle - 0.5) * degToRad) //just radians
+                                .startAngle(radScale(angleStart)) //converting from degs to radians
+                                .endAngle(radScale(angleStart + angleProportion - 0.003)); //just radians
+
+                        angleStart += angleProportion;
 
                         // Set the colour for the arc
                         var colour;
+                        var redScale = d3.scale.linear()
+                                .domain([dataMin, dataMax])
+                                .rangeRound([124, 24]);
+                        var greenScale = d3.scale.linear()
+                                .domain([dataMin, dataMax])
+                                .rangeRound([109, 22]);
+                        var blueScale = d3.scale.linear()
+                                .domain([dataMin, dataMax])
+                                .rangeRound([132, 25]);
+
                         if (i === highlightedIndex) {
-                            colour = "rgb(155,0,0)";
+                            colour = "rgb(90,24,127)";
+                            arc.innerRadius(innerRadius - selectedPadding / 2)
+                                    .outerRadius(outerRadius + selectedPadding);
                         } else {
-                            colour = "rgb(0,0,155)";
+                            colour = "rgb(" + redScale(selectedData[i].size) + "," + greenScale(selectedData[i].size) + "," + blueScale(selectedData[i].size) + ")";
+                            arc.innerRadius(innerRadius)
+                                    .outerRadius(outerRadius);
                         }
 
                         //Draw the arc
                         svg.append("path")
                                 .attr("d", arc)
                                 .attr("fill", colour)
-                                .attr("transform", "translate(600, 140)");
+                                .attr("transform", "translate(600, " + (outerRadius + selectedPadding + 10) + ")");
                     }
 
                     // Print out the text to the right of the data wheel
@@ -360,6 +387,7 @@
                             .attr("x", 750)
                             .attr("y", 200);
                 }
+                // If there is no data to draw
                 else {
                     svg.append("text")
                             .text("There is no data stored on this disk")
